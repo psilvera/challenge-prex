@@ -1,0 +1,171 @@
+{
+	"info": {
+		"_postman_id": "cb13ae1a-2758-4a6b-a2bb-22e7c144164e",
+		"name": "PREX-CHALLENGE",
+		"description": "Servicio Rest que se integra con la API de GIPHY para búsqueda de GIFs, permite autenticarse, obtener gifs por filtros, obtener un gif por ID y guardar un gif como favorito para el usuario.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15831870"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();",
+							"",
+							"if (jsonData.access_token) {",
+							"    pm.environment.set(\"access_token\", jsonData.access_token);",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"prex_challenge@prexcard.com\",\n    \"password\": \"pr3x1235\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost/api/giphy/login",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"giphy",
+						"login"
+					]
+				},
+				"description": "Servicio que recibe email+password y recibe un Token OAuth2 válido por 30 minutos"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Gif By Id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost/api/giphy/id/xT1Ra1NBgzJbnyibIY",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"giphy",
+						"id",
+						"xT1Ra1NBgzJbnyibIY"
+					]
+				},
+				"description": "Servicio que consulta a la API de Giphy los datos de un gif dado un ID, recibe el ID por GET y el BearerToken"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Gifs",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"query\": \"cats\",\n    \"limit\": 1,\n    \"offset\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost/api/giphy/search",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"giphy",
+						"search"
+					]
+				},
+				"description": "Servicio que busca gifs dado un filtro, en query se setea el string a buscar, en limit la cantidad de gifs a traer y tambien se puede setear el offset (posicion inicial para paginacion)"
+			},
+			"response": []
+		},
+		{
+			"name": "Save Favorite Gif",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"gif_id\": \"xT1Ra1NBgzJbnyibIdY\",\n    \"alias\": \"cat\",\n    \"user_id\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost/api/giphy/favorite",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"giphy",
+						"favorite"
+					]
+				},
+				"description": "Servicio que graba un gif como favorito, recibe el ID del gif, el alias con el cual se quiere guardar el gif y el ID de usuario. Se valída que el usuario exista en la tabla de users"
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,49 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prex-php
+    volumes:
+      - ./www:/var/www
+    working_dir: /var/www
+    depends_on:
+      - db
+    networks:
+      - prex-net
+
+  nginx:
+    image: nginx:latest
+    container_name: prex-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./www:/var/www
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - prex-net
+
+  db:
+    image: mariadb:10.11
+    container_name: prex-mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: prex_db
+      MYSQL_USER: prex_user
+      MYSQL_PASSWORD: prex_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - prex-net
+
+volumes:
+  db_data:
+
+networks:
+  prex-net:
+
